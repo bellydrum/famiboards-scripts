@@ -1,0 +1,92 @@
+#! /bin/bash
+
+###########################################
+#
+# deploy script
+#
+#   purpose
+#     deploy scripts to dev and prod.  
+#   usage
+#       $ ./deploy -s <stage>
+#   terminology
+#     prod:     intended for active site use
+#     test:     intended for testing site use
+#     live:     located in the live production directory.
+#     local:    located in this current code repository.
+#     dev:      located in a remote development repository.
+#
+#
+#
+###########################################
+
+# code environments
+PROD=production
+DEV=development
+
+# live environments
+PROD_STAGE=prod
+TEST_STAGE=test
+
+# filepaths
+LIVE_FILEPATH=../../public_html/js/scripts/
+LOCAL_FILEPATH=./public/
+
+# filenames
+PROD_FILENAME=main.min.js
+TEST_FILENAME=main-test.min.js
+
+# source
+SOURCE_FILENAME=./public/main.min.js
+
+# destination
+#   defaults to ./public/main-test.min.js
+DESTINATION_FILEPATH=$LOCAL_FILEPATH
+DESTINATION_FILENAME=$TEST_FILENAME
+
+# deploys file to live filepath when value is 1
+APPROVED_FOR_DEPLOYMENT=0
+
+HELP_MESSAGE="\nUSAGE:\n\t$ ./deploy -s <stage>\n\tstage may be \"test\" or \"prod\".\n\n"
+
+while getopts s: flag
+do
+    case "${flag}" in
+        s) stage=${OPTARG};;
+    esac
+done
+
+if [[ "$stage" != "" ]]; then
+    if [[ "$stage" = $PROD_STAGE ]]; then
+        DESTINATION_FILEPATH=$LIVE_FILEPATH  # ../../public_html/js/scripts
+        DESTINATION_FILENAME=$PROD_FILENAME  # main.min.js
+        APPROVED_FOR_DEPLOYMENT=1
+    elif [[ "$stage" = $TEST_STAGE ]]; then
+        # deploying to test
+        DESTINATION_FILEPATH=$LIVE_FILEPATH  # ../../public_html/js/scripts
+        DESTINATION_FILENAME=$TEST_FILENAME  # main-test.min.js
+        APPROVED_FOR_DEPLOYMENT=1
+    else
+        printf "\nUnknown stage.\n"
+        printf "$HELP_MESSAGE"
+    fi
+else
+    printf "\nPlease specify a stage.\n"
+    printf "$HELP_MESSAGE"
+fi
+
+if [[ $APPROVED_FOR_DEPLOYMENT -eq 1 ]]; then
+    printf "\nDestination: $DESTINATION_FILEPATH$DESTINATION_FILENAME\n"
+    read -p "Is this okay? (y/n) " USER_APPROVAL
+    if [[ "$USER_APPROVAL" = "y" || "$USER_APPROVAL" = "Y" ]]; then
+        if [[ $ENVIRONMENT = $PROD ]]; then
+            DESTINATION=$DESTINATION_FILEPATH$DESTINATION_FILENAME
+            mv $DESTINATION $DESTINATION_FILEPATH$DESTINATION_FILENAME.bkp
+            cp $SOURCE_FILENAME $DESTINATION
+            printf "\nMoved $SOURCE_FILENAME to $DESTINATION\n\n"
+        else
+            printf "\nNot in production; not deploying $DESTINATION_FILENAME\n\n"
+        fi
+    else
+        printf "\nStopped deployment.\nExiting.\n\n"
+    fi
+fi

@@ -2,10 +2,19 @@
   "name": "famiboards_scripts",
   "version": "1.0.0",
   "description": "Various custom scripts for Famiboards.",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "build": "./node_modules/.bin/babel src/ --out-dir public/",
-    "test": "test"
+    "deploy": "git pull origin main && npm run build && ./deploy -s $1",
+    "build": "npm run prep && npm run compile && npm run transpile && npm run compress && npm run clean && npm run finish",
+    "prep": "rm -rf tmp/ && cp -R src/ tmp/",
+    "compile": "npx webpack && find tmp/ ! -name 'main.es6' -type f -exec rm -f {} + && find tmp/ -empty -type d -delete",
+    "transpile": "./node_modules/.bin/babel tmp/ --out-dir tmp/ --no-comments",
+    "compress": "./node_modules/.bin/uglifyjs tmp/*.js --compress --mangle -o tmp/main.min.js",
+    "clean": "rm -rf tmp/main.es6 && rm -rf tmp/main.js",
+    "finish": "rm -rf public/** && mv tmp/main.min.js public/ && rm -rf tmp/",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -17,19 +26,22 @@
     "url": "https://github.com/bellydrum/famiboards_scripts/issues"
   },
   "homepage": "https://github.com/bellydrum/famiboards_scripts#readme",
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ]
-  },
   "dependencies": {
     "@babel/polyfill": "7.12.1",
-    "@babel/preset-env": "^7.8.4",
     "child_process": "1.0.2"
   },
   "devDependencies": {
     "@babel/cli": "7.17.0",
-    "@babel/core": "7.17.0",
-    "@babel/preset-env": "7.16.11"
+    "@babel/core": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "@webpack-cli/generators": "^2.4.2",
+    "babel-loader": "^8.2.5",
+    "css-loader": "^6.7.1",
+    "sass": "^1.51.0",
+    "sass-loader": "^12.6.0",
+    "style-loader": "^3.3.1",
+    "uglify-js": "3.15.4",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2"
   }
 }
