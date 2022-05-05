@@ -1,0 +1,35 @@
+{
+  "name": "famiboards_scripts",
+  "version": "1.0.0",
+  "description": "Various custom scripts for Famiboards.",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/babel src/ --out-dir public/",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bellydrum/famiboards_scripts.git"
+  },
+  "author": "bellydrum",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bellydrum/famiboards_scripts/issues"
+  },
+  "homepage": "https://github.com/bellydrum/famiboards_scripts#readme",
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "dependencies": {
+    "@babel/polyfill": "7.12.1",
+    "@babel/preset-env": "^7.8.4",
+    "child_process": "1.0.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.17.0",
+    "@babel/core": "7.17.0",
+    "@babel/preset-env": "7.16.11"
+  }
+}
