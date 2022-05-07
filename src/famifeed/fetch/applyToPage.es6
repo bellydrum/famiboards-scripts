@@ -27,9 +27,7 @@ export function applyToPage(responseData, cookieLoad=false) {
     const headlineTextSource = document.createElement('b');
     headline.title = headline.title.replace(headline.source + ': ', '');
     headline.title = headline.title.replace('&amp;', '&');
-    const headlineTextTitle = document.createTextNode(
-      ' | ' + headline.title.replace(headline.source + ': ', '')
-    );
+    const headlineTextTitle = document.createTextNode(' | ' + headline.title.replace(headline.source + ': ', ''));
     headlineTextSource.innerHTML = feedSource === "cookie" ?
       headline.source.toUpperCase() :
       feedSource.toUpperCase();

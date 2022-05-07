@@ -1,4 +1,5 @@
 import {cookie} from '../../cookie/cookie.es6';
+import {shuffle} from '../../misc/shuffle.es6';
 import {setFamifeedVisibility} from '../famifeed.es6';
 import {applyToPage} from './applyToPage.es6';
 
@@ -63,8 +64,8 @@ function getFeedJson(rssFeedUrl) {
 
 export function getFeedData() {
   /**
-   *  Handles the requesting and displaying of RSS feed data.
-   *  Also stores feed data in the cookie.
+   *  1. Requests and displays RSS feed data.
+   *  2. Stores RSS feed data in cookie.
    *
    *  @calls
    *   getFeedJson
@@ -73,7 +74,7 @@ export function getFeedData() {
    *  @modifies
    *   document (cookie, applyToPage)
    * */
-  const topFeeds = RSS_FEEDS.slice(0, SOURCE_LIMIT);
+  const topFeeds = shuffle(RSS_FEEDS).slice(0, SOURCE_LIMIT);
   let headlineCounter = 1;
   let sourcesCookieValue = '';
   let headlinesCookieValue = '';
