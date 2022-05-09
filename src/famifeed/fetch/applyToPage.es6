@@ -1,71 +1,59 @@
 import {cookie} from '../../cookie/cookie.es6';
 import {shuffle} from '../../misc/shuffle.es6';
+import {COOKIE_VALUE_DIVIDER, HEADLINE_LIMIT, RSS_COOKIE_EXPIRY} from '../globals/famifeedGlobals.es6';
 
-import {HEADLINE_LIMIT, TOTAL_HEADLINES} from '../globals/famifeedGlobals.es6';
-
-let CURRENT_HEADLINE_COUNT = 0;
-
-export function applyToPage(responseData, cookieLoad=false) {
+export function applyToPage(headlines, fromRss=false) {
   /**
-   * Applies headline data to the web page
-   * @param responseData - {
-   *      source: String,
-   *      items: [
-   *          { title: String, link: String, source: String },
-   *          { ... },
-   *      ]
-   *  }
-   * */
-  const feedSource = responseData.source;
-  const sourceHeadlines = cookieLoad === true ?
-    responseData.items :
-    responseData.items.slice(0, HEADLINE_LIMIT);
-  const famifeedHeadlineContainer = document.querySelector('.famifeed__item');
-  let headlineData = [];
-  const shuffledSourceHeadlines = shuffle(sourceHeadlines);
-  for (const headline of shuffledSourceHeadlines) {
-    const headlineTextSource = document.createElement('b');
-    headline.title = headline.title.replace(headline.source + ': ', '');
-    headline.title = headline.title.replace('&amp;', '&');
-    const headlineTextTitle = document.createTextNode(' | ' + headline.title.replace(headline.source + ': ', ''));
-    headlineTextSource.innerHTML = feedSource === "cookie" ?
-      headline.source.toUpperCase() :
-      feedSource.toUpperCase();
-    const headlineText = headline.title;
-    const linkUrl = headline.link;
-    headlineData.push({
-      headlineText: headlineText,
-      linkUrl: linkUrl,
-    });
-    const feedAnchor = document.createElement('a');
-    const feedTextContainer = document.createElement('div');
-    const headlineTextContainer = document.createElement('div');
-    headlineTextContainer.appendChild(headlineTextSource);
-    headlineTextContainer.appendChild(headlineTextTitle);
-    headlineTextContainer.classList.add('truncate');
-    feedTextContainer.appendChild(headlineTextContainer);
-    feedAnchor.appendChild(feedTextContainer);
-    feedAnchor.setAttribute('href', linkUrl);
-    feedAnchor.setAttribute('target', '_blank');
-    feedAnchor.classList.add('famifeed__anchor');
-    feedAnchor.setAttribute('onclick', 'return false;');
-    feedTextContainer.setAttribute('class', 'famifeed__text off');
-    famifeedHeadlineContainer.appendChild(feedAnchor);
-    CURRENT_HEADLINE_COUNT += 1;
-    if (CURRENT_HEADLINE_COUNT === TOTAL_HEADLINES) {
-      /**
-       * Handle completion of Famifeed population
-       **/
+   * @param headlines {array<link, source, title>} - headlines to display on Famifeed.
+   * @param fromRSS {boolean} - indicator whether headlines comes from RSS or document cookie.
+   *
+   * 1. Apply headline data to page
+   * 2. Save headlines to document cookie if necessary
+   */
 
-      /** trigger the listener for populated feed **/
-      const famifeedTicker = document.querySelector('.famifeed__ticker');
-      famifeedTicker.classList.add("famifeed__ticker-updated");
-
-      /** make news feed continuously scroll **/
-      const famifeed = document.querySelector('.famifeed__ticker');
-      const list = document.querySelector('.famifeed__list');
-      famifeed.append(list.cloneNode(true));
-    }
+  /** 1. Save headlines to document cookie if necessary **/
+  if (fromRss === true) {
+    const sources = Object.values(headlines).map(headline => encodeURIComponent(headline.source));
+    let i = sources.length;
+    while (i--) (i + 1) % HEADLINE_LIMIT === 0 && (sources.splice(i, 1));
+    let linksCookieValue = Object.values(headlines)
+      .map(headline => encodeURIComponent(headline.link))
+      .join(COOKIE_VALUE_DIVIDER);
+    let sourcesCookieValue = sources
+      .join(COOKIE_VALUE_DIVIDER);
+    let titlesCookieValue = Object.values(headlines)
+      .map(headline => encodeURIComponent(headline.title))
+      .join(COOKIE_VALUE_DIVIDER);
+    cookie.add({famifeed_sources: sourcesCookieValue}, RSS_COOKIE_EXPIRY);
+    cookie.add({famifeed_titles: titlesCookieValue}, RSS_COOKIE_EXPIRY);
+    cookie.add({famifeed_links: linksCookieValue}, RSS_COOKIE_EXPIRY);
+    cookie.add({get_famifeed_from_cookie: 'true'}, RSS_COOKIE_EXPIRY);
   }
-  return headlineData;
+
+  /** 2. Apply headline data to page **/
+  const famifeedHeadlineContainer = document.querySelector('.famifeed__item');
+  const shuffledHeadlines = shuffle(headlines);
+  for (let headline of shuffledHeadlines) {
+    const headlineSourceElement = document.createElement('b');
+    headlineSourceElement.innerHTML = headline.source.toUpperCase();
+    const headlineTitleElement = document.createTextNode(' | ' + headline.title.replace(headline.source + ': ', ''));
+
+    const headlineTextContainerElement = document.createElement('div');
+    headlineTextContainerElement.appendChild(headlineSourceElement);
+    headlineTextContainerElement.appendChild(headlineTitleElement);
+    headlineTextContainerElement.classList.add('truncate');
+
+    const headlineContainerElement = document.createElement('div');
+    headlineContainerElement.appendChild(headlineTextContainerElement);
+    headlineContainerElement.setAttribute('class', 'famifeed__text off');
+
+    const headlineAnchorElement = document.createElement('a');
+    headlineAnchorElement.appendChild(headlineContainerElement);
+    headlineAnchorElement.setAttribute('href', headline.link);
+    headlineAnchorElement.setAttribute('target', '_blank');
+    headlineAnchorElement.classList.add('famifeed__anchor');
+    headlineAnchorElement.setAttribute('onclick', 'return false;');
+
+    famifeedHeadlineContainer.appendChild(headlineAnchorElement);
+  }
 }

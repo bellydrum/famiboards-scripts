@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const stylesHandler = 'style-loader';
 
 const config = {
-    entry: ['./tmp/main.es6'],
+    entry: ['@babel/polyfill', './tmp/main.es6'],
     output: {
         filename: 'main.es6',
         path: path.resolve(__dirname, 'tmp'),
@@ -33,6 +33,9 @@ const config = {
                 type: 'asset',
             },
         ],
+    },
+    experiments: {
+      topLevelAwait: true,
     },
 };
 
