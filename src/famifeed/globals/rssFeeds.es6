@@ -1,12 +1,18 @@
 export const RSS_FEEDS = [{
         source: '@NintendoAmerica',
-        url: 'https://rss.app/feeds/t24NYWcEUWR6u5sR.xml'
+        url: 'https://nitter.net/NintendoAmerica/rss'
+    }, {
+        source: '@IndieWorldNA',
+        url: 'https://nitter.net/IndieWorldNA/rss'
     }, {
         source: '@Wario64',
-        url: 'https://rss.app/feeds/fhc5mLOA2EOlXt7l.xml'
+        url: 'https://nitter.net/Wario64/rss'
+    }, {
+        source: 'Serebii',
+        url: 'https://nitter.net/SerebiiNet/rss'
     }, {
         source: '@Nibellion',
-        url: 'https://rss.app/feeds/MpFdmWQhMbGtKBx5.xml'
+        url: 'https://nitter.net/Nibellion/rss'
     }, {
         source: 'Nintendo Life',
         url: 'https://nintendolife.com/feeds/news'
@@ -29,8 +35,8 @@ export const RSS_FEEDS = [{
         source: 'VGC',
         url: 'https://www.videogameschronicle.com/category/news/feed/'
     }, {
-        source: 'IGN',
-        url: 'http://feeds.feedburner.com/ign-nintendo-switch-articles'
+        source: 'Kotaku',
+        url: 'https://kotaku.com/rss'
     }, {
         source: 'Polygon',
         url: 'https://www.polygon.com/rss/index.xml'
@@ -52,5 +58,8 @@ export const RSS_FEEDS = [{
     }, {
         source: 'GameSpot',
         url: 'https://www.gamespot.com/feeds/game-news'
-    }
+    }, {
+        source: 'Anime News Network',
+        url: 'https://www.animenewsnetwork.com/news/rss.xml?ann-edition=us'
+    },
 ];

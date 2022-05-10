@@ -12,8 +12,6 @@ import {
   FF_AVAIL_COOKIE
 } from './globals/famifeedGlobals.es6';
 
-//document.querySelector(':root').style.setProperty('--famifeed-scroll-duration', '1000s');
-
 export async function activateFamifeed() {
   /**
    * Handles activation of Famifeed on page load.
@@ -51,28 +49,19 @@ export function toggleFamifeedVisibility(event='click', pageload=false) {
 }
 
 export function setFamifeedVisibility(state) {
-  const feedContainer = document.querySelector(".famifeed__container");
-  const headlineText = document.querySelectorAll(".famifeed__text");
-  const feedBackgrounds = document.querySelectorAll(".famifeed__background");
-  const feedAnchors = document.querySelectorAll(".famifeed__anchor");
-  const ciaoCiao = document.querySelector(".famifeed__icon-img");
+  const famifeedTicker = document.querySelector('.famifeed__ticker');
+  const feedContainer = document.querySelector('.famifeed__container');
+  const feedBackgrounds = document.querySelectorAll('.famifeed__background');
+  const ciaoCiao = document.querySelector('.famifeed__icon-img');
   const newCookie = {};
   if (state === ON) {
     ciaoCiao.setAttribute('src', CIAO_CIAO_GIF_PATH);
     newCookie[FF_PREF_COOKIE] = ON;
     feedContainer.classList.remove(OFF);
     feedContainer.classList.add(ON);
-    for (let feed of headlineText) {
-      feed.style.opacity = '1';
-    }
     for (let background of feedBackgrounds) {
       background.classList.remove(OFF);
       background.classList.add(ON);
-    }
-    for (let anchor of feedAnchors) {
-      anchor.classList.remove(OFF);
-      anchor.classList.add(ON);
-      anchor.removeAttribute('onclick');
     }
     cookie.add(newCookie);
   } else {
@@ -80,24 +69,13 @@ export function setFamifeedVisibility(state) {
     newCookie[FF_PREF_COOKIE] = OFF;
     feedContainer.classList.remove(ON);
     feedContainer.classList.add(OFF);
-    for (let feed of headlineText) {
-      feed.style.opacity = '0';
-      feed.classList.remove(ON);
-      feed.classList.add(OFF);
-    }
     for (let background of feedBackgrounds) {
       background.classList.remove(ON);
       background.classList.add(OFF);
     }
-    for (let anchor of feedAnchors) {
-      anchor.classList.remove(ON);
-      anchor.classList.add(OFF);
-      anchor.setAttribute('onclick', 'return false;');
-    }
     cookie.add(newCookie);
   }
   /** make news feed continuously scroll **/
-  const famifeedTicker = document.querySelector('.famifeed__ticker');
   const list = document.querySelector('.famifeed__list');
   famifeedTicker.append(list.cloneNode(true));
 }
