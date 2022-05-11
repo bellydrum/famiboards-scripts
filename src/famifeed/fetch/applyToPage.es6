@@ -33,21 +33,20 @@ export function applyToPage(headlines, fromRss=false) {
   }
 
   /** 2. Determine scroll speed **/
-  const customHeadlineCharLimit = parseInt(
-    [...document.querySelector(`[class*='${HEADLINE_CHAR_LIMIT_CLASSNAME}']`).classList]
-      .filter((className) => {return className.includes(HEADLINE_CHAR_LIMIT_CLASSNAME)})[0]
-      .replace(HEADLINE_CHAR_LIMIT_CLASSNAME, '')
-  );
+  const famifeedList = document.querySelector('.famifeed__ticker').firstElementChild;
+  const customHeadlineCharLimit = parseInt(famifeedList.dataset.famifeedCharLimit);
 
   let scrollDuration = (TOTAL_HEADLINES + 1) * 7;
   const scrollDurationUnits = Math.floor(scrollDuration * 0.09);
-  if (customHeadlineCharLimit >= 75) scrollDuration -= (scrollDurationUnits)
-  else if (customHeadlineCharLimit >= 65) scrollDuration -= (scrollDurationUnits * 2)
-  else if (customHeadlineCharLimit >= 55) scrollDuration -= (scrollDurationUnits * 3)
-  else if (customHeadlineCharLimit >= 45) scrollDuration -= (scrollDurationUnits * 4)
-  else if (customHeadlineCharLimit >= 35) scrollDuration -= (scrollDurationUnits * 5)
-  else if (customHeadlineCharLimit >= 25) scrollDuration -= (scrollDurationUnits * 6)
-  else scrollDuration -= (scrollDurationUnits * 7)
+  if (customHeadlineCharLimit) {
+    if (customHeadlineCharLimit >= 75) scrollDuration -= (scrollDurationUnits)
+    else if (customHeadlineCharLimit >= 65) scrollDuration -= (scrollDurationUnits * 2)
+    else if (customHeadlineCharLimit >= 55) scrollDuration -= (scrollDurationUnits * 3)
+    else if (customHeadlineCharLimit >= 45) scrollDuration -= (scrollDurationUnits * 4)
+    else if (customHeadlineCharLimit >= 35) scrollDuration -= (scrollDurationUnits * 5)
+    else if (customHeadlineCharLimit >= 25) scrollDuration -= (scrollDurationUnits * 6)
+    else scrollDuration -= (scrollDurationUnits * 7)
+  }
 
   document.querySelector(':root').style
     .setProperty('--famifeed-scroll-duration', `${scrollDuration}s`);

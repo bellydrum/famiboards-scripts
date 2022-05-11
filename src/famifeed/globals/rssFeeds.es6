@@ -26,6 +26,9 @@ export const RSS_FEEDS = [{
         source: 'Eurogamer',
         url: 'https://eurogamer.net/?format=rss',
     }, {
+        source: 'GoNintendo',
+        url: 'https://feedpress.me/gonintendo'
+    }, {
         source: 'Vooks',
         url: 'https://vooks.net/feed/'
     }, {
@@ -34,6 +37,9 @@ export const RSS_FEEDS = [{
     }, {
         source: 'VGC',
         url: 'https://www.videogameschronicle.com/category/news/feed/'
+    }, {
+        source: 'IGN',
+        url: 'http://feeds.feedburner.com/ign/news'
     }, {
         source: 'Kotaku',
         url: 'https://kotaku.com/rss'
@@ -59,7 +65,7 @@ export const RSS_FEEDS = [{
         source: 'GameSpot',
         url: 'https://www.gamespot.com/feeds/game-news'
     }, {
-        source: 'Anime News Network',
-        url: 'https://www.animenewsnetwork.com/news/rss.xml?ann-edition=us'
+        source: 'ComicBook',
+        url: 'https://comicbook.com/feed/'
     },
 ];
