@@ -1,43 +1,20 @@
-import {cookie} from '../../cookie/cookie.es6';
 import {shuffle} from '../../misc/shuffle.es6';
-import {COOKIE_VALUE_DIVIDER, HEADLINE_LIMIT, HEADLINE_CHAR_LIMIT_CLASSNAME, HEADLINE_CHAR_LIMIT, TOTAL_HEADLINES,
-  RSS_COOKIE_EXPIRY} from '../globals/famifeedGlobals.es6';
+import {HEADLINE_CHAR_LIMIT, TOTAL_HEADLINES} from '../globals/famifeedGlobals.es6';
 
-export function applyToPage(headlines, fromRss=false) {
+export function applyToPage(headlines) {
   /**
    * @param headlines {array<link, source, title>} - headlines to display on Famifeed.
-   * @param fromRSS {boolean} - indicator whether headlines comes from RSS or document cookie.
    *
-   * 1. Apply headline data to page
-   * 2. Determine scroll speed
-   * 3. Save headlines to document cookie if necessary
+   * 1. Determine scroll speed
+   * 2. Set the scroll speed
+   * 3. Apply headline data to page
    */
 
-  /** 1. Save headlines to document cookie if necessary **/
-  if (fromRss === true) {
-    const sources = Object.values(headlines).map(headline => encodeURIComponent(headline.source));
-    let i = sources.length;
-    while (i--) (i + 1) % HEADLINE_LIMIT === 0 && (sources.splice(i, 1));
-    let linksCookieValue = Object.values(headlines)
-      .map(headline => encodeURIComponent(headline.link))
-      .join(COOKIE_VALUE_DIVIDER);
-    let sourcesCookieValue = sources
-      .join(COOKIE_VALUE_DIVIDER);
-    let titlesCookieValue = Object.values(headlines)
-      .map(headline => encodeURIComponent(headline.title))
-      .join(COOKIE_VALUE_DIVIDER);
-    cookie.add({famifeed_sources: sourcesCookieValue}, RSS_COOKIE_EXPIRY);
-    cookie.add({famifeed_titles: titlesCookieValue}, RSS_COOKIE_EXPIRY);
-    cookie.add({famifeed_links: linksCookieValue}, RSS_COOKIE_EXPIRY);
-    cookie.add({get_famifeed_from_cookie: 'true'}, RSS_COOKIE_EXPIRY);
-  }
-
-  /** 2. Determine scroll speed **/
-  const famifeedList = document.querySelector('.famifeed__ticker').firstElementChild;
-  const customHeadlineCharLimit = parseInt(famifeedList.dataset.famifeedCharLimit);
-
+  /** 1. Determine scroll speed **/
   let scrollDuration = (TOTAL_HEADLINES + 1) * 7;
   const scrollDurationUnits = Math.floor(scrollDuration * 0.09);
+  const famifeedList = document.querySelector('.famifeed__ticker').firstElementChild;
+  const customHeadlineCharLimit = parseInt(famifeedList.dataset.famifeedCharLimit);
   if (customHeadlineCharLimit) {
     if (customHeadlineCharLimit >= 75) scrollDuration -= (scrollDurationUnits)
     else if (customHeadlineCharLimit >= 65) scrollDuration -= (scrollDurationUnits * 2)
@@ -48,6 +25,7 @@ export function applyToPage(headlines, fromRss=false) {
     else scrollDuration -= (scrollDurationUnits * 7)
   }
 
+  /** 2. Set the scroll speed **/
   document.querySelector(':root').style
     .setProperty('--famifeed-scroll-duration', `${scrollDuration}s`);
 

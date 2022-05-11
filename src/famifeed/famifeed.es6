@@ -1,6 +1,10 @@
 import {cookie} from '../cookie/cookie.es6';
+import {storageAvailable} from '../storage/localStorage.es6';
 import {fetchFromRss} from './fetch/fetchFromRss.es6';
+import {fetchFromLocalStorage} from './fetch/fetchFromLocalStorage.es6';
+import {saveToLocalStorage} from './store/saveToLocalStorage.es6';
 import {fetchFromCookie} from './fetch/fetchFromCookie.es6';
+import {saveToCookie} from './store/saveToCookie.es6';
 import {applyToPage} from './fetch/applyToPage.es6';
 
 import {
@@ -9,7 +13,7 @@ import {
   CIAO_CIAO_IMG_PATH,
   ON,
   OFF,
-  FF_AVAIL_COOKIE
+  FF_CACHE_AVAIL
 } from './globals/famifeedGlobals.es6';
 
 export async function activateFamifeed() {
@@ -18,23 +22,39 @@ export async function activateFamifeed() {
    *
    * @param preference {string} -
    *
-   * 1. Retrieve data from either RSS feeds or document cookie
-   * 2. Apply data to page and save cookie if necessary
+   * 1. Check if Famifeed is enabled on the DOM
+   * 2. Populate page with data from either request or localStorage cache
    * 3. Set Famifeed visibility
    * 4. Activate Famifeed toggle elements
    */
 
+  /** 1. Check if Famifeed is enabled on the DOM **/
   const famifeedIsEnabled = document.querySelector('.famifeed__container') !== null;
+
   if (famifeedIsEnabled) {
-    /** 1. Retrieve data from either RSS feeds or document cookie **/
-    const useCookies = cookie.getValueByKey(FF_AVAIL_COOKIE) === 'true';
-    useCookies ? console.log('Fetching data from cookies.') : console.log('Fetching data from RSS feeds.');
-    /** 2. Apply data to page and save cookie if necessary **/
-    applyToPage(useCookies ? await fetchFromCookie() : await fetchFromRss(), !useCookies);
+
+    /** 2. Populate page with latest data, or cached data if available **/
+    if (storageAvailable('localStorage') && localStorage.getItem(FF_CACHE_AVAIL) === 'true') {
+      console.log('Fetching headlines from localStorage.');
+      applyToPage(await fetchFromLocalStorage());
+    } else if (cookie.getValueByKey(FF_CACHE_AVAIL) === 'true') {
+      console.log('Fetching data from document cookie.');
+      applyToPage(await fetchFromCookie());
+    } else {
+      console.log('Fetching data from RSS feeds.');
+      const headlineData = await fetchFromRss();
+      storageAvailable('localStorage') ?
+        saveToLocalStorage(headlineData) :
+        saveToCookie(headlineData);
+      applyToPage(headlineData);
+    }
+
+
     /** 3. Set Famifeed visibility **/
     toggleFamifeedVisibility(null, true);
+
     /** 4. Activate Famifeed toggle elements **/
-    for (let toggle of document.querySelectorAll('[aria-label="famifeed-toggle"]')) {
+    for (let toggle of document.querySelectorAll("[aria-label='famifeed-toggle']")) {
       toggle.addEventListener('click', toggleFamifeedVisibility);
     }
   } else {

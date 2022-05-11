@@ -6,7 +6,10 @@ export async function fetchFromRss() {
   const topFeeds = shuffle(RSS_FEEDS).slice(0, SOURCE_LIMIT);
   const returnedHeadlines = [];
   for (const rssFeed of topFeeds) {
-    const response = await getFeedJson(rssFeed.url);
+    const rssFeedUrl = rssFeed.url.toLowerCase().includes('twitter.com') ?
+      twitterToNitter(rssFeed.url) :
+      rssFeed.url;
+    const response = await getFeedJson(rssFeedUrl);
     returnedHeadlines.push(...response.items.slice(0, HEADLINE_LIMIT).map(item => {
       return {link: item.link, source: rssFeed.source, title: item.title}
     }));
@@ -22,7 +25,7 @@ async function getFeedJson(rssFeedUrl) {
   try {
     response = await $.ajax({
       url: url,
-      type: "GET",
+      type: 'GET',
       data: {
         api_key: apiKey,
       },
@@ -34,4 +37,9 @@ async function getFeedJson(rssFeedUrl) {
   } catch (error) {
     console.log(error);
   }
+}
+
+function twitterToNitter(twitterUrl) {
+  return twitterUrl.replace('twitter.com', 'nitter.net') +
+    (twitterUrl.charAt(twitterUrl.length - 1) === '/' ? 'rss' : '/rss');
 }
