@@ -11,6 +11,9 @@ export const RSS_FEEDS = [{
     source: '@Wario64',
     url: 'https://twitter.com/Wario64'
   }, {
+    source: '@FamiComms',
+    url: 'https://twitter.com/FamiComms'
+  }, {
     source: 'Serebii',
     url: 'https://twitter.com/SerebiiNet'
   }, {
