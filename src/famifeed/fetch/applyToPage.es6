@@ -59,11 +59,22 @@ export function applyToPage(headlines) {
     if (headlineTitle.includes('Serebii')) headlineTitle = headlineTitle.replace(/Serebii [A-Z|a-z]*: /, '');
     /** clean up results from FamiComms **/
     if (headline.source.toLowerCase().includes('famicomms')) {
+/**
       if (headline.source.includes('--')) {
         headlineTitle = headlineTitle.replace(/--.+--\n\n/, '');
       } else {
         headlineTitle = headlineTitle.replace(/\s.+: \n\n/, ': ');
       }
+**/
+/** **/
+      if (headlineTitle.includes('--')) {
+        console.log(`before: ${headlineTitle}`);
+        headlineTitle = headlineTitle.replace(/--.+--\n\n/g, '');
+      } else {
+        headlineTitle = headlineTitle.replace(/\s.+: \n\n/, ': ');
+      }
+      console.log(`after: ${headlineTitle}`);
+/** **/
     }
 
     /** remove redundant twitter usernames from tweet content **/
