@@ -19,10 +19,12 @@ export const RSS_FEEDS = [{
   }, {
     source: '@Nibellion',
     url: 'https://twitter.com/Nibellion'
-  }, {
+  },
+  /**{
     source: 'Nintendo Life',
     url: 'https://nintendolife.com/feeds/news'
-  }, {
+  },**/
+  {
     source: 'NWR',
     url: 'https://nintendoworldreport.com/rss/news'
   }, {

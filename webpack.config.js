@@ -11,7 +11,7 @@ const config = {
     },
     plugins: [
         new webpack.DefinePlugin({
-            'process.env.FAMIFEED_RSS_API_KEY': JSON.stringify('fbtusb4sn1cqz6zsktqhx1lzk6o3b0o3uzcdskfy'),
+            'process.env.FAMIFEED_RSS_API_KEY': JSON.stringify('hky3ft9yw7mfystbg4u9nxwynvfdoheq0en1unuu'),
         }),
     ],
     module: {
