@@ -12,7 +12,7 @@ export const improveUsernameLineBreaks = () => {
       return word.slice(0, maxUpperCaseWordLength - 1) + '...';
     } else {
       const maxAllowedLength = upperToLowerRatioMap[numberOfCapitalLetters]
-      if ((numberOfCapitalLetters + (word.length - numberOfCapitalLetters)) >= maxAllowedLength) {
+      if ((numberOfCapitalLetters + (word.length - numberOfCapitalLetters)) > maxAllowedLength) {
         return word.slice(0, maxAllowedLength - 3) + '...';
       } else {
         return word
