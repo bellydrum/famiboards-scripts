@@ -28,6 +28,7 @@ export const improveUsernameLineBreaks = () => {
       /** if username risks going out-of-bounds **/
       if (username.length >= maxUpperCaseWordLength) {
         i.text = truncateWord(i.text);
+        i.setAttribute('style', 'white-space:nowrap');
       }
     /** if username contains spaces **/
     } else {
